@@ -25,6 +25,7 @@
     "durable-object-container-ssh",
     "first-public-beta",
     "global-boolean-values",
+    "json-string-escapes",
     "load-cloudflare-dotenv",
     "migrate-before-autoconfig",
     "narrow-sdk-error-imports",

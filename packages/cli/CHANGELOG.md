@@ -1,5 +1,14 @@
 # cf
 
+## 1.0.0-beta.13
+
+### Patch Changes
+
+- 2d8007d: Fix JSON string highlighting for escaped quotation marks
+
+  Keep the complete string value highlighted when JSON contains escaped quotes
+  or backslashes. Non-interactive output remains plain, parseable JSON.
+
 ## 1.0.0-beta.12
 
 ### Patch Changes
