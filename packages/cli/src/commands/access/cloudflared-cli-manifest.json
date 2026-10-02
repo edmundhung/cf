@@ -1,0 +1,321 @@
+{
+	"schemaVersion": 1,
+	"cloudflaredVersion": "5602511",
+	"commands": [
+		{
+			"path": ["access"],
+			"aliases": ["forward"],
+			"usage": "access <subcommand>",
+			"description": "Cloudflare Access protects internal resources by securing, authenticating and monitoring access\n\t\t\tper-user and by application. With Cloudflare Access, only authenticated users with the required permissions are\n\t\t\table to reach sensitive resources. The commands provided here allow you to interact with Access protected\n\t\t\tapplications from the command line.",
+			"arguments": [],
+			"hidden": false,
+			"skipFlagParsing": false,
+			"shortOptionGroups": false,
+			"options": [
+				{
+					"name": "fedramp",
+					"aliases": [],
+					"type": "boolean",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "use when performing operations in fedramp account",
+					"envVars": []
+				}
+			]
+		},
+		{
+			"path": ["access", "curl"],
+			"aliases": [],
+			"usage": "curl [--allow-request, -ar] <url> [<curl args>...]",
+			"description": "The curl subcommand wraps curl and automatically injects the JWT into a cf-access-token\n\t\t\t\t\theader when using curl to reach an application behind Access.",
+			"argsUsage": "<url> [curl-args...]",
+			"arguments": [
+				{
+					"name": "url",
+					"required": true,
+					"variadic": false
+				},
+				{
+					"name": "curl-args",
+					"required": false,
+					"variadic": true
+				}
+			],
+			"hidden": false,
+			"skipFlagParsing": true,
+			"shortOptionGroups": false,
+			"options": [
+				{
+					"name": "allow-request",
+					"aliases": ["ar"],
+					"type": "boolean",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "continue the request when no Access token is available",
+					"envVars": []
+				}
+			]
+		},
+		{
+			"path": ["access", "login"],
+			"aliases": [],
+			"usage": "login <url of access application>",
+			"description": "The login subcommand initiates an authentication flow with your identity provider.\n\t\t\t\t\tThe subcommand will launch a browser. For headless systems, a url is provided.\n\t\t\t\t\tOnce authenticated with your identity provider, the login command will generate a JSON Web Token (JWT)\n\t\t\t\t\tscoped to your identity, the application you intend to reach, and valid for a session duration set by your\n\t\t\t\t\tadministrator. cloudflared stores the token in local storage.",
+			"argsUsage": "[url]",
+			"arguments": [
+				{
+					"name": "url",
+					"required": false,
+					"variadic": false
+				}
+			],
+			"hidden": false,
+			"skipFlagParsing": false,
+			"shortOptionGroups": false,
+			"options": [
+				{
+					"name": "app",
+					"aliases": [],
+					"type": "string",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"envVars": []
+				},
+				{
+					"name": "auto-close",
+					"aliases": [],
+					"type": "boolean",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "automatically close the auth interstitial after action",
+					"envVars": []
+				},
+				{
+					"name": "no-verbose",
+					"aliases": [],
+					"type": "boolean",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "print only the jwt to stdout",
+					"envVars": []
+				},
+				{
+					"name": "quiet",
+					"aliases": ["q"],
+					"type": "boolean",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "do not print the jwt to the command line",
+					"envVars": []
+				}
+			]
+		},
+		{
+			"path": ["access", "ssh-config"],
+			"aliases": [],
+			"description": "Prints an example configuration ~/.ssh/config",
+			"arguments": [],
+			"hidden": false,
+			"skipFlagParsing": false,
+			"shortOptionGroups": false,
+			"options": [
+				{
+					"name": "hostname",
+					"aliases": [],
+					"type": "string",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "specify the hostname of your application.",
+					"envVars": []
+				},
+				{
+					"name": "short-lived-cert",
+					"aliases": [],
+					"type": "boolean",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "specify if you wish to generate short lived certs.",
+					"envVars": []
+				}
+			]
+		},
+		{
+			"path": ["access", "ssh-gen"],
+			"aliases": [],
+			"description": "Generates a short lived certificate for given hostname",
+			"arguments": [],
+			"hidden": false,
+			"skipFlagParsing": false,
+			"shortOptionGroups": false,
+			"options": [
+				{
+					"name": "hostname",
+					"aliases": [],
+					"type": "string",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "specify the hostname of your application.",
+					"envVars": []
+				}
+			]
+		},
+		{
+			"path": ["access", "tcp"],
+			"aliases": ["rdp", "ssh", "smb"],
+			"description": "The tcp subcommand sends data over a proxy to the Cloudflare edge.",
+			"arguments": [],
+			"hidden": false,
+			"skipFlagParsing": false,
+			"shortOptionGroups": false,
+			"options": [
+				{
+					"name": "connect-to",
+					"aliases": [],
+					"type": "string",
+					"repeatable": false,
+					"required": false,
+					"hidden": true,
+					"usage": "Connect to alternate location for testing, value is host, host:port, or sni:port:host",
+					"envVars": []
+				},
+				{
+					"name": "debug-stream",
+					"aliases": [],
+					"type": "integer",
+					"repeatable": false,
+					"required": false,
+					"hidden": true,
+					"usage": "Writes up-to the max provided stream payloads to the logger as debug statements.",
+					"envVars": []
+				},
+				{
+					"name": "destination",
+					"aliases": [],
+					"type": "string",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "specify the destination address of your SSH server.",
+					"envVars": ["TUNNEL_SERVICE_DESTINATION"]
+				},
+				{
+					"name": "header",
+					"aliases": ["H"],
+					"type": "string",
+					"repeatable": true,
+					"required": false,
+					"hidden": false,
+					"usage": "specify additional headers you wish to send.",
+					"envVars": []
+				},
+				{
+					"name": "hostname",
+					"aliases": ["tunnel-host", "T"],
+					"type": "string",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "specify the hostname of your application.",
+					"envVars": ["TUNNEL_SERVICE_HOSTNAME"]
+				},
+				{
+					"name": "log-directory",
+					"aliases": [],
+					"type": "string",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "Save application log to this directory for reporting issues.",
+					"envVars": []
+				},
+				{
+					"name": "log-level",
+					"aliases": ["loglevel"],
+					"type": "string",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "Application logging level {debug, info, warn, error, fatal}. ",
+					"envVars": []
+				},
+				{
+					"name": "logfile",
+					"aliases": [],
+					"type": "string",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "Save application log to this file for reporting issues.",
+					"envVars": []
+				},
+				{
+					"name": "service-token-id",
+					"aliases": ["id"],
+					"type": "string",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "specify an Access service token ID you wish to use.",
+					"envVars": ["TUNNEL_SERVICE_TOKEN_ID"]
+				},
+				{
+					"name": "service-token-secret",
+					"aliases": ["secret"],
+					"type": "string",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "specify an Access service token secret you wish to use.",
+					"envVars": ["TUNNEL_SERVICE_TOKEN_SECRET"]
+				},
+				{
+					"name": "url",
+					"aliases": ["listener", "L"],
+					"type": "string",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"usage": "specify the host:port to forward data to Cloudflare edge.",
+					"envVars": ["TUNNEL_SERVICE_URL"]
+				}
+			]
+		},
+		{
+			"path": ["access", "token"],
+			"aliases": [],
+			"usage": "token <url of access application>",
+			"description": "The token subcommand produces a JWT which can be used to authenticate requests.",
+			"argsUsage": "[url]",
+			"arguments": [
+				{
+					"name": "url",
+					"required": false,
+					"variadic": false
+				}
+			],
+			"hidden": false,
+			"skipFlagParsing": false,
+			"shortOptionGroups": false,
+			"options": [
+				{
+					"name": "app",
+					"aliases": [],
+					"type": "string",
+					"repeatable": false,
+					"required": false,
+					"hidden": false,
+					"envVars": []
+				}
+			]
+		}
+	]
+}

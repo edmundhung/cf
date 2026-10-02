@@ -90,6 +90,30 @@ describe("cf access tcp", () => {
 		);
 	});
 
+	it("forwards an option discovered from the cloudflared manifest", async () => {
+		const result = await runCf([
+			"access",
+			"tcp",
+			"--hostname",
+			"ssh.example.com",
+			"--log-directory",
+			"./logs",
+		]);
+
+		expect(result.exitCode).toBe(0);
+		expect(runCloudflared).toHaveBeenCalledWith(
+			[
+				"access",
+				"tcp",
+				"--hostname",
+				"ssh.example.com",
+				"--log-directory",
+				"./logs",
+			],
+			{ env: undefined }
+		);
+	});
+
 	it.each(["ssh", "rdp", "smb"])(
 		"supports the %s alias through cloudflared TCP",
 		async (alias) => {

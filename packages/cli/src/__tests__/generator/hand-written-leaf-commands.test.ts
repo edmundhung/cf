@@ -7,7 +7,6 @@ import {
 import {
 	handWrittenLeafCommandModule,
 	handWrittenLeafCommands,
-	handWrittenParentOverrides,
 	readHandWrittenLeafCommandMeta,
 } from "../../../generator/hand-written-overrides.js";
 import { errorMessage } from "../../../generator/util.js";
@@ -15,11 +14,6 @@ import { errorMessage } from "../../../generator/util.js";
 const workersSchema = {
 	name: "workers",
 	description: "Workers",
-} as Parameters<typeof generateResourceIndexFile>[0];
-
-const accessSchema = {
-	name: "access",
-	description: "Access",
 } as Parameters<typeof generateResourceIndexFile>[0];
 
 describe("hand-written leaf commands", () => {
@@ -117,83 +111,9 @@ describe("hand-written leaf commands", () => {
 		);
 	});
 
-	it("adds process commands to the generated Access root", () => {
-		expect(handWrittenLeafCommands("access")).toEqual([
-			{
-				kind: "leaf",
-				parent: "access",
-				name: "login",
-				dir: "access/login",
-			},
-			{
-				kind: "leaf",
-				parent: "access",
-				name: "token",
-				dir: "access/token",
-			},
-			{
-				kind: "leaf",
-				parent: "access",
-				name: "ssh-config",
-				dir: "access/ssh-config",
-			},
-			{
-				kind: "leaf",
-				parent: "access",
-				name: "ssh-gen",
-				dir: "access/ssh-gen",
-			},
-			{
-				kind: "leaf",
-				parent: "access",
-				name: "tcp",
-				dir: "access/tcp",
-			},
-			{
-				kind: "leaf",
-				parent: "access",
-				name: "curl",
-				dir: "access/curl",
-			},
-		]);
-		expect(handWrittenParentOverrides("access")).toEqual({
-			describe: "Access protected applications and services",
-			expose: true,
-		});
-		const tcp = handWrittenLeafCommands("access").find(
-			(command) => command.name === "tcp"
-		);
-		if (tcp === undefined) {
-			throw new Error("access tcp is not registered");
-		}
-		expect(readHandWrittenLeafCommandMeta("access", tcp).aliases).toEqual([
-			"ssh",
-			"rdp",
-			"smb",
-		]);
-
-		const generated = generateResourceIndexFile(accessSchema, [], []);
-		expect(generated).toContain(
-			"describe: 'Access protected applications and services'"
-		);
-		expect(generated).toContain(
-			"import $login from '#commands/access/login/index.js';"
-		);
-		expect(generated).toContain(
-			"import $token from '#commands/access/token/index.js';"
-		);
-		expect(generated).toContain(
-			"import $sshconfig from '#commands/access/ssh-config/index.js';"
-		);
-		expect(generated).toContain(
-			"import $sshgen from '#commands/access/ssh-gen/index.js';"
-		);
-		expect(generated).toContain(
-			"import $tcp from '#commands/access/tcp/index.js';"
-		);
-		expect(generated).toContain(
-			"import $curl from '#commands/access/curl/index.js';"
-		);
+	it("leaves manifest-backed Access commands out of generated products", () => {
+		expect(handWrittenLeafCommands("access")).toEqual([]);
+		expect(handWrittenLeafCommandModule("access/tcp")).toBeUndefined();
 	});
 
 	it("binds sidecar identity to the registered command", () => {

@@ -87,6 +87,23 @@ describe("cf access login", () => {
 		]);
 	});
 
+	it("forwards cloudflared flags whose names start with no-", async () => {
+		const result = await runCf([
+			"access",
+			"login",
+			"https://app.example.com",
+			"--no-verbose",
+		]);
+
+		expect(result.exitCode).toBe(0);
+		expect(runCloudflared).toHaveBeenCalledWith([
+			"access",
+			"login",
+			"--no-verbose",
+			"https://app.example.com",
+		]);
+	});
+
 	it("rejects local mode before starting cloudflared", async () => {
 		await expect(
 			runCf(["access", "login", "https://app.example.com", "--local"])

@@ -23,15 +23,6 @@ export const generatedCommands: GeneratedCommand[] = [
 	},
 	{
 		command: lazyCommand<CommonYargsOptions>(
-			"access",
-			"Access protected applications and services",
-			() => import("./access/index.js"),
-			null
-		),
-		hideCommand: false,
-	},
-	{
-		command: lazyCommand<CommonYargsOptions>(
 			"account-tags",
 			"account-tags",
 			() => import("./account-tags/index.js"),

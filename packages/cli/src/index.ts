@@ -286,6 +286,18 @@ function resolvedCommandName(yargsInstance: unknown): string | undefined {
 	}
 }
 
+function resolvedInvocationCommand(
+	yargsInstance: unknown,
+	args = process.argv.slice(2)
+): string | undefined {
+	const resolved = resolvedCommandName(yargsInstance);
+	const path = commandPath(args, 2);
+	const root = rootHandWrittenCommands().find(
+		(command) => rootCommandName(command) === path[0]
+	);
+	return root?.resolveCommand?.(path) ?? resolved;
+}
+
 function excludesTelemetry(command: string): boolean {
 	const [root, subcommand] = command.split(" ");
 	return root === "complete" || (root === "cli" && subcommand === "telemetry");
@@ -584,7 +596,7 @@ export function buildCli(rawArgs: string[], options: BuildCliOptions = {}) {
 			// Command middleware can suppress decoration before startup output.
 			maybeOpenSession(argv.quiet, updateCheck?.notice);
 			updateCheck?.start();
-			const resolvedCommand = resolvedCommandName(cli);
+			const resolvedCommand = resolvedInvocationCommand(cli, rawArgs);
 			if (resolvedCommand !== undefined) {
 				onCommandResolved?.(resolvedCommand);
 			}
@@ -605,7 +617,16 @@ export function buildCli(rawArgs: string[], options: BuildCliOptions = {}) {
 				((rootCommand === "dev" && localWasSpecified) ||
 					(argv.local && HAND_WRITTEN_ROOTS.has(rootCommand)))
 			) {
-				throw new Error(`--local is not supported by cf ${rootCommand}.`);
+				const root = rootHandWrittenCommands().find(
+					(command) => rootCommandName(command) === rootCommand
+				);
+				const unsupportedCommand =
+					root?.resolveCommand === undefined
+						? rootCommand
+						: (resolvedCommand ?? rootCommand);
+				throw new Error(
+					`--local is not supported by cf ${unsupportedCommand}.`
+				);
 			}
 
 			if (argv.persistTo === "") {
@@ -646,7 +667,7 @@ export function buildCli(rawArgs: string[], options: BuildCliOptions = {}) {
 		.fail((msg, err, yargsInstance) => {
 			maybeOpenSession(false, updateCheck?.notice);
 			updateCheck?.start();
-			const resolvedCommand = resolvedCommandName(cli);
+			const resolvedCommand = resolvedInvocationCommand(cli, rawArgs);
 			if (resolvedCommand !== undefined) {
 				onCommandResolved?.(resolvedCommand);
 			}
@@ -832,7 +853,7 @@ export async function main(): Promise<void> {
 		}
 		await reportParseErrorIfUnreported(
 			err,
-			resolvedCommand ?? resolvedCommandName(cli)
+			resolvedCommand ?? resolvedInvocationCommand(cli)
 		);
 		throw handleError(err);
 	} finally {

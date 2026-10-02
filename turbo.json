@@ -3,7 +3,7 @@
 	"remoteCache": {
 		"signature": true
 	},
-	"globalEnv": ["NODE_VERSION", "CI_OS"],
+	"globalEnv": ["NODE_VERSION", "CI_OS", "CF_CLOUDFLARED_MANIFEST"],
 	"globalPassThroughEnv": [
 		"CARGO_HOME",
 		"CF_FORCE_OSC_PROGRESS",

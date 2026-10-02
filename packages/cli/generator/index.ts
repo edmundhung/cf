@@ -272,20 +272,11 @@ export const transformer: TransformerFn = async (forge: Forge) => {
 
 	// --- Generate CLI commands for all APIs ---
 	if (forge.commands.has("access")) {
-		throw new Error("The synthetic Access root collides with a Forge command.");
+		throw new Error(
+			"The cloudflared-backed Access root collides with a Forge command."
+		);
 	}
-	// Access is a local CLI command group, independent of the OpenAPI roots.
-	const accessSchema: Schema.command = {
-		name: "access",
-		description: "Access protected applications and services",
-		methods: [],
-		globalCliArgs: [],
-		hideCommand: false,
-	};
-	const commandSchemas: Array<[string, Schema.command]> = [
-		...forge.commands,
-		["access", accessSchema],
-	];
+	const commandSchemas: Array<[string, Schema.command]> = [...forge.commands];
 
 	for (const [name, schema] of commandSchemas) {
 		console.log(`  Generating CLI commands for: ${name}`);

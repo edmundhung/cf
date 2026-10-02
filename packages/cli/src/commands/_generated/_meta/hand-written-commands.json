@@ -8,7 +8,7 @@
 			"fullPath": ["access", "curl"],
 			"category": "action",
 			"description": "Run curl against an Access-protected application with its JWT injected by cloudflared.",
-			"usage": "cf access curl [--allow-request] <url> [-- <curl arguments...>]",
+			"usage": "cf access curl <url> [curl-args..] [options]",
 			"arguments": [
 				{
 					"name": "url",
@@ -16,6 +16,13 @@
 					"type": "string",
 					"required": true,
 					"description": "URL of the Access application"
+				},
+				{
+					"name": "curl-args",
+					"position": 1,
+					"type": "string",
+					"required": false,
+					"description": "Arguments forwarded to curl after --"
 				}
 			],
 			"options": [
@@ -28,10 +35,9 @@
 				}
 			],
 			"handWritten": {
-				"kind": "leaf",
+				"kind": "root",
 				"overrides": false,
-				"dir": "access/curl",
-				"parent": "access"
+				"dir": "access"
 			}
 		},
 		{
@@ -40,7 +46,7 @@
 			"fullPath": ["access", "login"],
 			"category": "action",
 			"description": "Authenticate with an Access application and store its JWT through cloudflared.",
-			"usage": "cf access login <url>",
+			"usage": "cf access login <url> [options]",
 			"arguments": [
 				{
 					"name": "url",
@@ -50,12 +56,37 @@
 					"description": "URL of the Access application"
 				}
 			],
-			"options": [],
+			"options": [
+				{
+					"name": "app",
+					"type": "string",
+					"required": false,
+					"description": ""
+				},
+				{
+					"name": "auto-close",
+					"type": "boolean",
+					"required": false,
+					"description": "automatically close the auth interstitial after action"
+				},
+				{
+					"name": "no-verbose",
+					"type": "boolean",
+					"required": false,
+					"description": "print only the jwt to stdout"
+				},
+				{
+					"name": "quiet",
+					"alias": "q",
+					"type": "boolean",
+					"required": false,
+					"description": "do not print the jwt to the command line"
+				}
+			],
 			"handWritten": {
-				"kind": "leaf",
+				"kind": "root",
 				"overrides": false,
-				"dir": "access/login",
-				"parent": "access"
+				"dir": "access"
 			}
 		},
 		{
@@ -64,27 +95,26 @@
 			"fullPath": ["access", "ssh-config"],
 			"category": "action",
 			"description": "Print an example SSH configuration for an Access application.",
-			"usage": "cf access ssh-config [--hostname <hostname>] [--short-lived-cert]",
+			"usage": "cf access ssh-config [options]",
 			"arguments": [],
 			"options": [
 				{
 					"name": "hostname",
 					"type": "string",
 					"required": false,
-					"description": "Hostname of the Access application"
+					"description": "specify the hostname of your application."
 				},
 				{
 					"name": "short-lived-cert",
 					"type": "boolean",
 					"required": false,
-					"description": "Include short-lived certificate configuration"
+					"description": "specify if you wish to generate short lived certs."
 				}
 			],
 			"handWritten": {
-				"kind": "leaf",
+				"kind": "root",
 				"overrides": false,
-				"dir": "access/ssh-config",
-				"parent": "access"
+				"dir": "access"
 			}
 		},
 		{
@@ -93,28 +123,27 @@
 			"fullPath": ["access", "ssh-gen"],
 			"category": "action",
 			"description": "Generate a short-lived certificate for an Access SSH application.",
-			"usage": "cf access ssh-gen --hostname <hostname>",
+			"usage": "cf access ssh-gen [options]",
 			"arguments": [],
 			"options": [
 				{
 					"name": "hostname",
 					"type": "string",
 					"required": true,
-					"description": "Hostname of the Access application"
+					"description": "specify the hostname of your application."
 				}
 			],
 			"handWritten": {
-				"kind": "leaf",
+				"kind": "root",
 				"overrides": false,
-				"dir": "access/ssh-gen",
-				"parent": "access"
+				"dir": "access"
 			}
 		},
 		{
 			"command": "cf access tcp",
 			"name": "tcp",
 			"fullPath": ["access", "tcp"],
-			"aliases": ["ssh", "rdp", "smb"],
+			"aliases": ["rdp", "ssh", "smb"],
 			"category": "action",
 			"description": "Proxy a TCP connection through Access. The command is also available as ssh, rdp, and smb.",
 			"usage": "cf access tcp [options]",
@@ -122,63 +151,69 @@
 			"options": [
 				{
 					"name": "hostname",
+					"alias": ["tunnel-host", "T"],
 					"type": "string",
 					"required": true,
-					"description": "Hostname of the Access application"
+					"description": "specify the hostname of your application."
 				},
 				{
 					"name": "destination",
 					"type": "string",
 					"required": false,
-					"description": "Destination address of the target server"
+					"description": "specify the destination address of your SSH server."
 				},
 				{
 					"name": "url",
+					"alias": ["listener", "L"],
 					"type": "string",
 					"required": false,
-					"description": "Local host and port to forward to the Cloudflare edge"
+					"description": "specify the host:port to forward data to Cloudflare edge."
 				},
 				{
 					"name": "header",
+					"alias": "H",
 					"type": "string",
 					"required": false,
-					"description": "Additional request header; repeat for multiple headers"
+					"description": "specify additional headers you wish to send."
 				},
 				{
 					"name": "service-token-id",
+					"alias": "id",
 					"type": "string",
 					"required": false,
-					"description": "Access service token ID"
+					"description": "specify an Access service token ID you wish to use."
 				},
 				{
 					"name": "service-token-secret",
+					"alias": "secret",
 					"type": "string",
 					"required": false,
-					"description": "Access service token secret"
+					"description": "specify an Access service token secret you wish to use."
 				},
 				{
 					"name": "log-level",
 					"alias": "loglevel",
 					"type": "string",
 					"required": false,
-					"description": "cloudflared log level",
-					"enum": [
-						"trace",
-						"debug",
-						"info",
-						"warn",
-						"error",
-						"fatal",
-						"panic",
-						"disabled"
-					]
+					"description": "Application logging level {debug, info, warn, error, fatal}. "
+				},
+				{
+					"name": "log-directory",
+					"type": "string",
+					"required": false,
+					"description": "Save application log to this directory for reporting issues."
+				},
+				{
+					"name": "logfile",
+					"type": "string",
+					"required": false,
+					"description": "Save application log to this file for reporting issues."
 				}
 			],
 			"handWritten": {
-				"kind": "leaf",
+				"kind": "root",
 				"overrides": false,
-				"dir": "access/tcp",
-				"parent": "access"
+				"dir": "access"
 			}
 		},
 		{
@@ -187,7 +222,7 @@
 			"fullPath": ["access", "token"],
 			"category": "action",
 			"description": "Print a JWT for authenticating with an Access application.",
-			"usage": "cf access token <url>",
+			"usage": "cf access token <url> [options]",
 			"arguments": [
 				{
 					"name": "url",
@@ -197,12 +232,18 @@
 					"description": "URL of the Access application"
 				}
 			],
-			"options": [],
+			"options": [
+				{
+					"name": "app",
+					"type": "string",
+					"required": false,
+					"description": ""
+				}
+			],
 			"handWritten": {
-				"kind": "leaf",
+				"kind": "root",
 				"overrides": false,
-				"dir": "access/token",
-				"parent": "access"
+				"dir": "access"
 			}
 		},
 		{
@@ -1666,7 +1707,6 @@
 		}
 	],
 	"descriptions": {
-		"access": "Access protected applications and services",
 		"ai": "ai",
 		"containers": "Deploy and manage Containers applications on Cloudflare's global network",
 		"containers images": "Operations for images",
@@ -1679,6 +1719,7 @@
 		"workers": "workers",
 		"workers versions": "Operations for versions",
 		"workers triggers": "Manage triggers (Routes, Workflows, Cron triggers etc.)",
+		"access": "Access protected applications and services",
 		"auth": "Manage authentication and profiles",
 		"init": "Create a new Cloudflare project or set up an existing one",
 		"cli": "Discover commands and configure the cf CLI",

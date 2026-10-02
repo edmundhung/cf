@@ -1,6 +1,9 @@
 import { spawnCloudflared } from "@cloudflare/workers-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { runCloudflared } from "../../commands/cloudflared.js";
+import {
+	assertCloudflaredVersion,
+	runCloudflared,
+} from "../../commands/cloudflared.js";
 import { createChildProcessController } from "../../lib/process.js";
 import type { ChildProcess } from "node:child_process";
 
@@ -57,11 +60,11 @@ describe("runCloudflared", () => {
 		const error = vi.spyOn(console, "error").mockImplementation(() => {});
 		arrangeExit(0, null);
 
-		await runCloudflared(["access", "curl", "--header", "secret"]);
+		await runCloudflared(["tunnel", "run", "--token", "secret"]);
 
 		const options = vi.mocked(spawnCloudflared).mock.calls[0]?.[1];
 		options?.logger?.debug(
-			"Spawning cloudflared: cloudflared access curl --header secret"
+			"Spawning cloudflared: cloudflared tunnel run --token secret"
 		);
 		options?.logger?.debug("Using cached cloudflared");
 		expect(error).toHaveBeenCalledOnce();
@@ -89,5 +92,21 @@ describe("runCloudflared", () => {
 		});
 
 		await expect(runCloudflared([])).rejects.toThrow("spawn failed");
+	});
+
+	it("rejects a cloudflared older than the bundled manifest", () => {
+		expect(() => assertCloudflaredVersion("2026.8.0", "2026.9.3")).toThrow(
+			"cloudflared 2026.8.0 is older than 2026.9.3"
+		);
+	});
+
+	it("accepts matching, newer, and development manifest versions", () => {
+		expect(() =>
+			assertCloudflaredVersion("2026.9.3", "2026.9.3")
+		).not.toThrow();
+		expect(() =>
+			assertCloudflaredVersion("2026.10.0", "2026.9.3")
+		).not.toThrow();
+		expect(() => assertCloudflaredVersion("2026.1.0", "18e3f42")).not.toThrow();
 	});
 });

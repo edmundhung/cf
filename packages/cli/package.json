@@ -61,7 +61,8 @@
 		"./package.json": "./package.json"
 	},
 	"scripts": {
-		"generate": "tsx generate.ts",
+		"generate": "tsx generate-cloudflared.ts && tsx generate.ts",
+		"generate:cloudflared": "tsx generate-cloudflared.ts",
 		"dev": "tsx src/dev.ts",
 		"build": "tsdown",
 		"build:test": "tsdown --config tsdown.test.config.ts",

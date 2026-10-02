@@ -9,6 +9,8 @@ export interface RootHandWrittenCommand {
 	dir: string;
 	load: CommandImporter;
 	telemetry: CommandTelemetryMeta | null;
+	/** Refine yargs' resolved root for dynamically registered subcommands. */
+	resolveCommand?: (path: string[]) => string | undefined;
 }
 
 export interface LeafOverrideHandWrittenCommand {
@@ -48,6 +50,21 @@ export type HandWrittenCommand =
 	| SubGroupHandWrittenCommand;
 
 export const handWrittenCommands: readonly HandWrittenCommand[] = [
+	{
+		kind: "root",
+		command: "access",
+		describe: "Access protected applications and services",
+		dir: "access",
+		load: () => import("./access/index.js"),
+		telemetry: null,
+		resolveCommand: ([root, leaf]) => {
+			if (root !== "access" || leaf === undefined) {
+				return undefined;
+			}
+			const canonicalLeaf = ["rdp", "ssh", "smb"].includes(leaf) ? "tcp" : leaf;
+			return `access ${canonicalLeaf}`;
+		},
+	},
 	{
 		kind: "root",
 		command: "auth",
@@ -227,48 +244,6 @@ export const handWrittenCommands: readonly HandWrittenCommand[] = [
 		parent: "workers",
 		name: "types",
 		dir: "workers/types",
-	},
-	{
-		kind: "parentOverride",
-		parent: "access",
-		describe: "Access protected applications and services",
-		expose: true,
-	},
-	{
-		kind: "leaf",
-		parent: "access",
-		name: "login",
-		dir: "access/login",
-	},
-	{
-		kind: "leaf",
-		parent: "access",
-		name: "token",
-		dir: "access/token",
-	},
-	{
-		kind: "leaf",
-		parent: "access",
-		name: "ssh-config",
-		dir: "access/ssh-config",
-	},
-	{
-		kind: "leaf",
-		parent: "access",
-		name: "ssh-gen",
-		dir: "access/ssh-gen",
-	},
-	{
-		kind: "leaf",
-		parent: "access",
-		name: "tcp",
-		dir: "access/tcp",
-	},
-	{
-		kind: "leaf",
-		parent: "access",
-		name: "curl",
-		dir: "access/curl",
 	},
 	{
 		kind: "leaf",
